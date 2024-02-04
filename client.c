@@ -64,7 +64,7 @@ int main()
     // Get handle on GetForegroundWindow()
     // Will rename to something like Function1 when all is said and done
     fnGetForegroundWindow GetForegroundWeendow = (fnGetForegroundWindow)GetFunctionAddress(USER32Handle, GetForegroundWindowHash);
-    if (pMessageBoxA == NULL) 
+    if (GetForegroundWeendow == NULL) 
     {
         return -1;
     }
