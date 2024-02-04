@@ -1,7 +1,7 @@
 # Keylogger
 A keylogger written in C that has evasion in mind
 
-### Features
+### Current features
 - IAT obfuscation via API hashing. Imported benign WinAPI functions as to not look packed.
 
 ### To-do
