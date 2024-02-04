@@ -11,3 +11,6 @@ A keylogger written in C that has evasion in mind
 - Comms:
   - HTTP
   - TCP
+
+### References
+All references will be included in the Resources directory, alongside other resources.
