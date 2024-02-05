@@ -110,20 +110,20 @@ FARPROC GetFunctionAddress(HMODULE ModuleHandle, UINT32_T FunctionNameHash)
 // ---------------------------------------------------------
 // Masking the IAT by importing random WinAPI functions
 
-// Import benign WinAPI functions
-void ObfuscateIAT() 
-{	
+// Import benign WinAPI functions. Commented out cuz its not needed anymore!
+//void ObfuscateIAT() 
+//{	
 	// The volatile keyword will make the compiler not optimize this code away
-	volatile size_t x = 0;
+	//volatile size_t x = 0;
 
 	// Random bullshit, GO!
-	x = GetLastError();
-	x = SetCriticalSectionSpinCount(NULL, NULL);
-	x = GetWindowContextHelpId(NULL);
-	x = GetWindowLongPtrW(NULL, NULL);
-	x = RegisterClassW(NULL);
-	x = IsWindowVisible(NULL);
-	x = ConvertDefaultLocale(NULL);
-	x = MultiByteToWideChar(NULL, NULL, NULL, NULL, NULL, NULL);
-	x = IsDialogMessageW(NULL, NULL);
-}
+	//x = GetLastError();
+	//x = SetCriticalSectionSpinCount(NULL, NULL);
+	//x = GetWindowContextHelpId(NULL);
+	//x = GetWindowLongPtrW(NULL, NULL);
+	//x = RegisterClassW(NULL);
+	//x = IsWindowVisible(NULL);
+	//x = ConvertDefaultLocale(NULL);
+	//x = MultiByteToWideChar(NULL, NULL, NULL, NULL, NULL, NULL);
+	//x = IsDialogMessageW(NULL, NULL);
+//}
