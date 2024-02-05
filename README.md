@@ -1,6 +1,8 @@
 # Keylogger
 A keylogger written in C that has evasion in mind
 
+> 🚫 Disclaimer: Use of this project is for Educational purposes only. Using it on unauthorised machines is strictly forbidden. If somebody is found to use it for illegal/ malicious intent, we are not the be held held responsible.
+
 ### Current features
 - IAT obfuscation via API hashing. Imported benign WinAPI functions as to not look packed.
 
