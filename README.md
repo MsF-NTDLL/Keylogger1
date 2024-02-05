@@ -6,6 +6,7 @@ A keylogger written in C that has evasion in mind
 
 
 ### Current features
+- Logging keys via GetRawInputData
 - IAT obfuscation via API hashing
 
 ### To-do
