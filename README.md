@@ -11,7 +11,7 @@ A keylogger written in C that has evasion in mind
 
 ### To-do
 
-- The parts of DllMain.c that need work have been marked with TO-DO. 
+- The parts of main.c that need work have been marked with TO-DO. 
 - Create a C2 which will process the data
 - Data exfil through:
   - Reddit
