@@ -1,10 +1,8 @@
-#pragma once
 #include <Windows.h>
-
 
 // |--------------------------------------------------------|
 // |########################################################|
-// |################### IATfuscation #######################|
+// |################# IAT Obfuscation ######################|
 // |########################################################|
 // |--------------------------------------------------------|
 // |   Obfuscate the used APIs via API hashing              |
@@ -28,7 +26,7 @@ UINT32_T FNV1a(const char* text)
 }
 
 // Get a handle on the DLL with the specified hash (in uppercase, i.e. NTDLL.DLL)
-HMODULE GetDllHandle(UINT32_T DllNameHash) 
+HMODULE GetDllHandle(UINT32_T DllNameHash)
 {
 
 #ifdef _WIN64
@@ -41,11 +39,11 @@ HMODULE GetDllHandle(UINT32_T DllNameHash)
 	PPEB_LDR_DATA LDRData = (PPEB_LDR_DATA)(pPeb->Ldr);
 	PLDR_DATA_TABLE_ENTR DTE = (PLDR_DATA_TABLE_ENTRY)(LDRData->InMemoryOrderModuleList.Flink);
 
-	while (DTE) 
+	while (DTE)
 	{
 
-		if (DTE->FullDllName.Length != NULL && DTE->FullDllName.Length < MAX_PATH) 
-		{	
+		if (DTE->FullDllName.Length != NULL && DTE->FullDllName.Length < MAX_PATH)
+		{
 
 			CHAR DllName[MAX_PATH];
 
@@ -110,9 +108,9 @@ FARPROC GetFunctionAddress(HMODULE ModuleHandle, UINT32_T FunctionNameHash)
 // ---------------------------------------------------------
 // Masking the IAT by importing random WinAPI functions
 
-// Import benign WinAPI functions. Commented out cuz its not needed anymore!
+// Import benign WinAPI functions
 //void ObfuscateIAT() 
-//{	
+{	
 	// The volatile keyword will make the compiler not optimize this code away
 	//volatile size_t x = 0;
 
@@ -126,4 +124,4 @@ FARPROC GetFunctionAddress(HMODULE ModuleHandle, UINT32_T FunctionNameHash)
 	//x = ConvertDefaultLocale(NULL);
 	//x = MultiByteToWideChar(NULL, NULL, NULL, NULL, NULL, NULL);
 	//x = IsDialogMessageW(NULL, NULL);
-//}
+}
