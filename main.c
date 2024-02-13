@@ -9,6 +9,8 @@ SIZE_T Index = 0;
 
 const char WindowClassName[] = "EvilWindow"; // Because I'm an evil bastard! >:D
 
+// credit to vx-underground for the below
+
 // Window procedure of our message-only window
 LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
