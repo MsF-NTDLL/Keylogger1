@@ -6,12 +6,13 @@ A keylogger written in C that has evasion in mind
 
 
 ### Current features
-- Logging keys via GetRawInputData
+- Logging keys via NtGetRawInputData (**currently being written to achieve**)
 - IAT obfuscation via API hashing
 
 ### To-do
 
-- Use NtGetRawInputData. Implement indirect syscalls.
+- Unhook NTDLL
+- Disable ETW
 - Create a C2 which will process the data
 - Data exfil through:
   - Reddit
