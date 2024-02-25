@@ -11,7 +11,7 @@ A keylogger written in C that has evasion in mind
 
 ### To-do
 
-- Unhook NTDLL
+- Delay execution between WinAPI calls
 - Disable ETW
 - Create a C2 which will process the data
 - Data exfil through:
